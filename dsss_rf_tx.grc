@@ -61,7 +61,7 @@ blocks:
   id: variable
   parameters:
     comment: ''
-    value: 2437e6
+    value: 2390e6
   states:
     bus_sink: false
     bus_source: false
@@ -145,7 +145,7 @@ blocks:
   id: variable
   parameters:
     comment: ''
-    value: '0.05'
+    value: '0.1'
   states:
     bus_sink: false
     bus_source: false
@@ -206,14 +206,14 @@ blocks:
     comment: ''
     maxoutbuf: '0'
     minoutbuf: '0'
-    num_items: int(tx_burst_samples)
+    num_items: int(tx_burst_samples)*2
     type: complex
     vlen: '1'
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1192, 408.0]
+    coordinate: [1192, 352.0]
     rotation: 0
     state: enabled
 - name: blocks_multiply_const_vxx_0
@@ -646,7 +646,7 @@ blocks:
   parameters:
     affinity: ''
     alias: ''
-    amp: 'False'
+    amp: tx_amp
     bandwidth: '0'
     center_freq: center_freq
     comment: ''
@@ -658,7 +658,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1200, 500.0]
+    coordinate: [1192, 436.0]
     rotation: 0
     state: enabled
 
