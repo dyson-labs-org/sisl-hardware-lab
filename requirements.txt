@@ -1,5 +1,3 @@
-# Python dependencies
-# Add your requirements here
-# Example:
-# numpy
-# matplotlib
+# Runtime dependencies for direct pip install -r usage.
+# Primary install flow is `pip install -e .` from pyproject.toml.
+tomli>=2.0.1; python_version < "3.11"

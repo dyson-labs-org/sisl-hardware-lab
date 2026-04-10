@@ -1,0 +1,13 @@
+local_norad_id = 12345
+local_callsign = "SISL-LAB-A"
+
+[radio]
+center_freq_mhz = 2400
+bandwidth_mhz = 5
+chip_rate_mcps = 5
+mode = "DSSS"
+
+[session]
+max_payload_bytes = 51200
+default_data_rate_kbps = 10
+enable_fhss = true

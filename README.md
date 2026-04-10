@@ -1,21 +1,79 @@
 # SISL Hardware Lab
 
-A Python project for hardware experimentation and development.
+SISL Hardware Lab is the working repository for Dyson SCI hackathon implementation work around the Secure Inter-Satellite Link (SISL) protocol.
 
-## Installation
+This repo is intentionally scaffolded for rapid iteration across:
+- protocol implementation
+- radio/SDR experiments
+- session/key management prototypes
+- test vectors and repeatable experiment logs
 
-```bash
-pip install -r requirements.txt
+## Quick Start
+
+### 1. Create a virtual environment
+
+PowerShell:
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
 ```
 
-## Usage
+### 2. Install dependencies
 
-TODO: Add usage instructions
+```powershell
+pip install -e .[dev]
+```
 
-## Contributing
+### 3. Run checks
 
-TODO: Add contributing guidelines
+```powershell
+ruff check src tests
+pytest
+```
+
+### 4. Run a smoke demo
+
+```powershell
+python examples/quickstart.py
+```
+
+## Repository Layout
+
+```text
+.
+|-- configs/                  # Runtime and lab configuration files
+|-- docs/                     # Architecture notes, protocol notes, experiment logs
+|-- examples/                 # Minimal runnable examples
+|-- scripts/                  # Local helper scripts
+|-- src/sisl_hardware_lab/    # Python package
+|   |-- crypto/               # Key derivation scaffolding
+|   |-- protocol/             # Frame and hail message helpers
+|   |-- radio/                # Radio abstractions + simulation stubs
+|   |-- session/              # Session lifecycle management
+|   `-- utils/                # Shared utilities
+`-- tests/                    # Unit tests for skeleton behavior
+```
+
+## Hackathon References
+
+- SISL protocol spec: https://github.com/dyson-labs-org/scrap/blob/master/spec/SISL.md
+- Hardware BOM seeds are tracked in [`docs/hardware/bill-of-materials.md`](docs/hardware/bill-of-materials.md)
+
+## Upload To GitHub
+
+Your `origin` remote is already configured to:
+
+`https://github.com/dyson-labs-org/sisl-hardware-lab.git`
+
+To publish this scaffold:
+
+```powershell
+git add .
+git commit -m "Scaffold SISL hardware lab repository structure"
+git push origin main
+```
 
 ## License
 
-MIT License - see LICENSE file for details
+MIT License. See `LICENSE`.

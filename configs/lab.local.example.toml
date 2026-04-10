@@ -1,0 +1,14 @@
+# Copy to `configs/lab.local.toml` and edit for machine/local SDR settings.
+local_norad_id = 54321
+local_callsign = "SISL-LAB-B"
+
+[radio]
+center_freq_mhz = 2425
+bandwidth_mhz = 10
+chip_rate_mcps = 8
+mode = "DSSS"
+
+[session]
+max_payload_bytes = 51200
+default_data_rate_kbps = 25
+enable_fhss = true
