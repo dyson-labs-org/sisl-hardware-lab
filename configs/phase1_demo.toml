@@ -1,0 +1,41 @@
+
+## 2. Put this in `configs/phase1_demo.toml`
+
+```toml
+[radio]
+center_freq_hz = 2437000000
+sample_rate_sps = 2400000
+chip_rate_cps = 1000000
+payload_rate_bps = 1000
+
+[tx]
+device = "hackrf"
+tx_gain_db = 0
+enabled = true
+
+[rx]
+device = "hackrf"
+enabled = true
+
+[observer]
+device = "hackrf_or_other_sdr"
+center_freq_hz = 2437000000
+sample_rate_sps = 2400000
+enabled = true
+
+[dsss]
+code_length = 1023
+seed_label = "SISL-public-hailing-code-v2"
+fixed_chip_offset = 0
+
+[bench]
+attenuation_db_total = 0
+cable_notes = ""
+operator_notes = ""
+
+[kpis]
+log_observer_visible = true
+log_correct_code_decode = true
+log_wrong_code_decode = true
+log_packet_success = true
+log_hidden_decodable_margin = true
