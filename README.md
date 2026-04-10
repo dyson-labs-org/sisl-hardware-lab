@@ -430,25 +430,167 @@ Send a simple SCRAP-style task request over the secure SISL channel.
 - [ ] `feat/crypto-handshake`
 - [ ] `feat/p2p-scrap-demo`
 
----
+## RF Measurement KPIs
 
-## Immediate next actions
+The RF story for this repo is not just "how many dB down did the signal look." The main question is whether SISL can spread energy across bandwidth such that:
 
-### Person1
-- [ ] Create repo skeleton
-- [ ] Create branches
-- [ ] Assign owners
-- [ ] Start hardware visibility test with attenuators
+1. a passive observer does not meaningfully recover the signal, while
+2. an intended receiver with the correct spreading code still recovers it reliably.
 
-### Person2
-- [ ] Start `sisl_dsss.py`
-- [ ] Start `sisl_dsss_demo.grc`
-- [ ] Validate correct-code / wrong-code behavior
+This section defines the RF metrics we care about gathering during the hackathon.
 
-### Person3
-- [ ] Start `sisl_crypto.py`
-- [ ] Start `test_sisl_crypto.py`
-- [ ] Prove loopback handshake before RF integration
+### North-star RF KPI
+
+- **Covert recovery margin (dB)**  
+  The margin between:
+  - the point where the passive observer can no longer meaningfully detect or decode the signal, and
+  - the point where the intended receiver still achieves acceptable recovery after despreading.
+
+This is the primary KPI for the RF demonstration.
+
+### Primary RF KPIs
+
+#### 1. Power spectral density suppression
+- **What it is:** How much the spread waveform lowers apparent power per FFT bin or per Hz relative to an unspread or narrowband reference at comparable total transmit power.
+- **Why it matters:** SISL is trying to hide RF energy inside bandwidth rather than presenting a narrow obvious emitter.
+- **How to measure it:**
+  - Transmit an unspread reference waveform
+  - Transmit the spread waveform
+  - Compare observer-view peak level, PSD, or per-bin prominence
+- **Report as:**  
+  - peak suppression relative to unspread reference (dB)  
+  - approximate PSD suppression (dB/bin or dB/Hz)
+
+#### 2. Occupied bandwidth
+- **What it is:** The bandwidth actually occupied by the spread signal.
+- **Why it matters:** If the signal is not materially wider than the unspread case, then spreading is not doing meaningful work.
+- **How to measure it:**
+  - 99% occupied bandwidth
+  - null-to-null bandwidth, if convenient
+  - -20 dBc bandwidth, if convenient
+- **Report as:** Hz or MHz
+
+#### 3. Processing gain
+- **What it is:** The gain achieved by spreading and despreading, both theoretically and as measured in practice.
+- **Why it matters:** This is the core trade: sacrifice spectral efficiency to reduce observable PSD while still recovering the signal at the intended receiver.
+- **Theory targets for this demo:**
+  - Hail mode: ~30 dB processing gain from 1 Mcps / 1 kbps
+  - P2P mode: ~20 dB processing gain from 1 Mcps / 10 kbps
+- **How to measure it:**
+  - Compare pre-despread observer-view SNR-like visibility to post-despread receiver recovery margin
+  - Estimate effective gain from correlation / recovery results
+- **Report as:**  
+  - theoretical processing gain (dB)  
+  - measured effective processing gain (dB)
+
+#### 4. Hidden-but-decodable threshold
+- **What it is:** The attenuation point where the observer no longer has meaningful visibility, but the intended receiver still decodes successfully.
+- **Why it matters:** This is the most important experimental threshold in the demo.
+- **How to measure it:**
+  - Sweep attenuation
+  - Record observer visibility
+  - Record intended receiver decode success
+- **Report as:**  
+  - total attenuation at observer-loss threshold  
+  - total attenuation at receiver-failure threshold  
+  - hidden-but-decodable margin (dB)
+
+#### 5. Decode success vs attenuation
+- **What it is:** Reliability of recovery as attenuation increases.
+- **Why it matters:** A hidden signal that only works once is not a convincing communications demo.
+- **How to measure it:**
+  - Repeat runs at multiple attenuation levels
+  - Record payload recovery, frame recovery, or packet recovery rates
+- **Report as:**  
+  - packet success rate vs attenuation  
+  - frame success rate vs attenuation  
+  - optional BER vs attenuation
+
+#### 6. Observer failure rate
+- **What it is:** How often the passive observer can detect, correlate, frame, or decode anything useful.
+- **Why it matters:** The observer must fail, not just "not be sure."
+- **How to measure it:**
+  - No-code observer attempt
+  - Wrong-code observer attempt
+  - Optional matched-filter attempt without correct sequence
+- **Report as:**  
+  - observer detect success rate  
+  - observer decode success rate  
+  - wrong-code correlation success rate
+
+### Secondary RF KPIs
+
+#### 7. Spectral flatness across the spread band
+- **What it is:** How evenly energy is distributed across the spread signal bandwidth.
+- **Why it matters:** A poor implementation may leak obvious peaks, tones, or structure even if the total waveform is technically spread.
+- **What to look for:**
+  - strong spurs
+  - LO leakage
+  - DC offset artifacts
+  - uneven shaping that creates identifiable peaks
+
+#### 8. Adjacent-channel leakage / out-of-band leakage
+- **What it is:** How much energy spills outside the intended spread band.
+- **Why it matters:** The demo should show controlled spreading, not just wideband mess.
+- **Report as:** a relative out-of-band leakage estimate if the tooling supports it
+
+#### 9. Spectral efficiency
+- **What it is:** Useful bits per second per Hz.
+- **Why it matters:** This is a context metric, not the optimization target.
+- **Interpretation:** For this demo, low spectral efficiency is expected because bandwidth is being traded for lower PSD and processing gain.
+- **Use it to explain the trade, not to judge success.**
+
+### Metrics we should capture for every serious run
+
+For each run, record:
+
+- date / time
+- center frequency
+- sample rate
+- chip rate
+- payload rate
+- spreading code type:
+  - public hailing code
+  - session-derived code
+- TX gain / power setting
+- attenuation chain used
+- observer SDR used
+- intended receiver SDR used
+- observer visible yes/no
+- observer decoded yes/no
+- wrong-code decode yes/no
+- intended receiver decoded yes/no
+- packet / frame success
+- notes on artifacts or failure mode
+
+### Recommended plots / artifacts
+
+The most useful outputs to save under `docs/` or `docs/experiments/` are:
+
+- observer FFT/waterfall screenshot for unspread reference
+- observer FFT/waterfall screenshot for spread waveform
+- receiver correlator / despread output screenshot
+- attenuation sweep log
+- packet success vs attenuation plot
+- short notes on the hidden-but-decodable threshold
+
+### What counts as a strong RF result
+
+A strong RF result is not simply "the signal was X dB down." A strong result means:
+
+- the spread signal has materially lower apparent PSD than the unspread reference
+- the passive observer cannot meaningfully recover it
+- the intended receiver can recover it with the correct code
+- the system remains reliable across a useful attenuation range
+- the team can quantify the hidden-but-decodable margin
+
+### Practical interpretation
+
+For this hackathon, the key RF question is:
+
+> How effectively can we spread RF energy across bandwidth to reduce observer-visible signal prominence while preserving reliable despread recovery for the authorized receiver?
+
+That is the RF measurement story this repo should support.
 
 ## License
 
