@@ -31,13 +31,15 @@ class Frame:
         return header + self.payload + struct.pack(">I", crc)
 
     @classmethod
-    def from_bytes(cls, packet: bytes) -> "Frame":
+    def from_bytes(cls, packet: bytes) -> Frame:
         """Parse and validate a serialized frame."""
 
         if len(packet) < _HEADER_SIZE + _CRC_SIZE:
             raise ValueError("Packet too short to contain frame")
 
-        sync, version, msg_type, payload_length = struct.unpack(_HEADER_FORMAT, packet[:_HEADER_SIZE])
+        sync, version, msg_type, payload_length = struct.unpack(
+            _HEADER_FORMAT, packet[:_HEADER_SIZE]
+        )
         if sync != SYNC_WORD:
             raise ValueError("Invalid sync word")
 

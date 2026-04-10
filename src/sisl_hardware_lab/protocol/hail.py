@@ -5,7 +5,7 @@ from __future__ import annotations
 import struct
 from dataclasses import dataclass
 
-from .frame import Frame, VERSION
+from .frame import VERSION, Frame
 
 HAIL_MSG_TYPE = 0x01
 BODY_SIZE = 17
@@ -37,29 +37,26 @@ class HailBody:
         _validate_u64(self.nonce, "nonce")
         _validate_u8(self.flags, "flags")
 
-        return (
-            self.source_norad.to_bytes(3, "big")
-            + struct.pack(
-                ">HBBBQB",
-                self.center_freq_offset_mhz,
-                self.bandwidth_code,
-                self.mode_code,
-                self.chip_rate_mcps,
-                self.nonce,
-                self.flags,
-            )
+        return self.source_norad.to_bytes(3, "big") + struct.pack(
+            ">HBBBQB",
+            self.center_freq_offset_mhz,
+            self.bandwidth_code,
+            self.mode_code,
+            self.chip_rate_mcps,
+            self.nonce,
+            self.flags,
         )
 
     @classmethod
-    def decode(cls, data: bytes) -> "HailBody":
+    def decode(cls, data: bytes) -> HailBody:
         """Decode 17-byte payload into typed hail body."""
 
         if len(data) != BODY_SIZE:
             raise ValueError(f"Hail body must be {BODY_SIZE} bytes")
 
         source_norad = int.from_bytes(data[:3], "big")
-        center_freq_offset_mhz, bandwidth_code, mode_code, chip_rate_mcps, nonce, flags = struct.unpack(
-            ">HBBBQB", data[3:]
+        center_freq_offset_mhz, bandwidth_code, mode_code, chip_rate_mcps, nonce, flags = (
+            struct.unpack(">HBBBQB", data[3:])
         )
         return cls(
             source_norad=source_norad,
@@ -110,13 +107,7 @@ def build_hail_frame(
     if len(auth_tag) != TAG_SIZE:
         raise ValueError("auth_tag must be 16 bytes")
 
-    payload = (
-        target_norad.to_bytes(3, "big")
-        + caller_ephemeral_pub
-        + iv
-        + body.encode()
-        + auth_tag
-    )
+    payload = target_norad.to_bytes(3, "big") + caller_ephemeral_pub + iv + body.encode() + auth_tag
     frame = Frame(version=VERSION, msg_type=HAIL_MSG_TYPE, payload=payload)
     return frame.to_bytes()
 

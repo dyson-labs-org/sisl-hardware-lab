@@ -46,11 +46,15 @@ def derive_session_material(
     """Derive session keys and spreading seed from X3DH-like inputs."""
 
     shared_secret = dh1 + dh2 + dh3
-    transcript = struct.pack(
-        ">II",
-        min(caller_norad, responder_norad),
-        max(caller_norad, responder_norad),
-    ) + caller_ephemeral_pub + responder_ephemeral_pub
+    transcript = (
+        struct.pack(
+            ">II",
+            min(caller_norad, responder_norad),
+            max(caller_norad, responder_norad),
+        )
+        + caller_ephemeral_pub
+        + responder_ephemeral_pub
+    )
 
     key_material = hkdf_sha256(
         ikm=shared_secret,

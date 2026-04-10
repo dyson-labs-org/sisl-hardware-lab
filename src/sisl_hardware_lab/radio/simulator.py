@@ -12,9 +12,9 @@ class InMemoryRadio:
 
     name: str
     _inbox: deque[bytes] = field(default_factory=deque, repr=False)
-    _peer: "InMemoryRadio | None" = field(default=None, repr=False)
+    _peer: InMemoryRadio | None = field(default=None, repr=False)
 
-    def connect(self, peer: "InMemoryRadio") -> None:
+    def connect(self, peer: InMemoryRadio) -> None:
         """Connect this radio to a peer radio."""
 
         self._peer = peer
