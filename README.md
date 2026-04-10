@@ -434,18 +434,18 @@ Send a simple SCRAP-style task request over the secure SISL channel.
 
 ## Immediate next actions
 
-### Calvin
+### Person1
 - [ ] Create repo skeleton
 - [ ] Create branches
 - [ ] Assign owners
 - [ ] Start hardware visibility test with attenuators
 
-### Radio owner
+### Person2
 - [ ] Start `sisl_dsss.py`
 - [ ] Start `sisl_dsss_demo.grc`
 - [ ] Validate correct-code / wrong-code behavior
 
-### Crypto owner
+### Person3
 - [ ] Start `sisl_crypto.py`
 - [ ] Start `test_sisl_crypto.py`
 - [ ] Prove loopback handshake before RF integration
