@@ -61,7 +61,7 @@ blocks:
   id: variable
   parameters:
     comment: ''
-    value: 2390e6
+    value: 902e6
   states:
     bus_sink: false
     bus_source: false
@@ -133,7 +133,7 @@ blocks:
   id: variable
   parameters:
     comment: ''
-    value: '2'
+    value: '16'
   states:
     bus_sink: false
     bus_source: false
@@ -196,42 +196,6 @@ blocks:
     bus_source: false
     bus_structure: null
     coordinate: [992, 264.0]
-    rotation: 0
-    state: enabled
-- name: blocks_head_0
-  id: blocks_head
-  parameters:
-    affinity: ''
-    alias: ''
-    comment: ''
-    maxoutbuf: '0'
-    minoutbuf: '0'
-    num_items: int(tx_burst_samples)*2
-    type: complex
-    vlen: '1'
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [1192, 352.0]
-    rotation: 0
-    state: enabled
-- name: blocks_multiply_const_vxx_0
-  id: blocks_multiply_const_vxx
-  parameters:
-    affinity: ''
-    alias: ''
-    comment: ''
-    const: tx_amp
-    maxoutbuf: '0'
-    minoutbuf: '0'
-    type: complex
-    vlen: '1'
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [1192, 272.0]
     rotation: 0
     state: enabled
 - name: blocks_multiply_xx_0
@@ -646,7 +610,7 @@ blocks:
   parameters:
     affinity: ''
     alias: ''
-    amp: tx_amp
+    amp: 'True'
     bandwidth: '0'
     center_freq: center_freq
     comment: ''
@@ -658,15 +622,13 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1192, 436.0]
+    coordinate: [1224, 292.0]
     rotation: 0
     state: enabled
 
 connections:
 - [analog_const_source_x_0, '0', blocks_float_to_complex_0, '1']
-- [blocks_float_to_complex_0, '0', blocks_multiply_const_vxx_0, '0']
-- [blocks_head_0, '0', soapy_hackrf_sink_0, '0']
-- [blocks_multiply_const_vxx_0, '0', blocks_head_0, '0']
+- [blocks_float_to_complex_0, '0', soapy_hackrf_sink_0, '0']
 - [blocks_multiply_xx_0, '0', blocks_float_to_complex_0, '0']
 - [blocks_multiply_xx_0, '0', qtgui_freq_sink_x_0, '0']
 - [blocks_multiply_xx_0, '0', qtgui_time_sink_x_0_0, '0']

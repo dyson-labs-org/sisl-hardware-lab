@@ -64,7 +64,7 @@ class dsss_rf_tx(gr.top_block, Qt.QWidget):
         ##################################################
         # Variables
         ##################################################
-        self.sps_chip = sps_chip = 2
+        self.sps_chip = sps_chip = 16
         self.code_len = code_len = 127
         self.tx_burst_samples = tx_burst_samples = 50e3
         self.tx_amp = tx_amp = 0.1
@@ -72,7 +72,7 @@ class dsss_rf_tx(gr.top_block, Qt.QWidget):
         self.samp_rate = samp_rate = 2e6
         self.pn_code = pn_code = [1,-1,1,1,-1,1,-1,-1,1,-1,1,1,-1,-1,1,1,-1,1,-1,-1,1,1,-1,1,1,-1,1,-1,1,-1,-1,1,1,-1,1,1,-1,1,-1,-1,1,-1,1,1,-1,-1,1,1,-1,1,-1,-1,1,1,-1,1,1,-1,1,-1,1,-1,-1,1,1,-1,1,1,-1,1,-1,-1,1,-1,1,1,-1,-1,1,1,-1,1,-1,-1,1,1,-1,1,1,-1,1,-1,1,-1,-1,1,1,-1,1,1,-1,1,-1,-1,1,-1,1,1,-1,-1,1,1,-1,1,-1,-1,1,1,-1,1,1,-1,1,-1,1,-1,-1]
         self.hackrf_samp_rate = hackrf_samp_rate = 2.4e6
-        self.center_freq = center_freq = 2390e6
+        self.center_freq = center_freq = 902e6
         self.bit_pattern = bit_pattern = [1,0,1,1,0,0,1,0]
         self.baseband_samp_rate = baseband_samp_rate = 2e6
 
@@ -91,7 +91,7 @@ class dsss_rf_tx(gr.top_block, Qt.QWidget):
         self.soapy_hackrf_sink_0.set_sample_rate(0, samp_rate)
         self.soapy_hackrf_sink_0.set_bandwidth(0, 0)
         self.soapy_hackrf_sink_0.set_frequency(0, center_freq)
-        self.soapy_hackrf_sink_0.set_gain(0, 'AMP', tx_amp)
+        self.soapy_hackrf_sink_0.set_gain(0, 'AMP', True)
         self.soapy_hackrf_sink_0.set_gain(0, 'VGA', min(max(16, 0.0), 47.0))
         self.qtgui_time_sink_x_0_0 = qtgui.time_sink_f(
             1024, #size
@@ -239,8 +239,6 @@ class dsss_rf_tx(gr.top_block, Qt.QWidget):
         self.blocks_repeat_0_0 = blocks.repeat(gr.sizeof_float*1, sps_chip)
         self.blocks_repeat_0 = blocks.repeat(gr.sizeof_float*1, samples_per_symbol)
         self.blocks_multiply_xx_0 = blocks.multiply_vff(1)
-        self.blocks_multiply_const_vxx_0 = blocks.multiply_const_cc(tx_amp)
-        self.blocks_head_0 = blocks.head(gr.sizeof_gr_complex*1, (int(tx_burst_samples)*2))
         self.blocks_float_to_complex_0 = blocks.float_to_complex(1)
         self.analog_const_source_x_0 = analog.sig_source_f(0, analog.GR_CONST_WAVE, 0, 0, 0)
 
@@ -249,9 +247,7 @@ class dsss_rf_tx(gr.top_block, Qt.QWidget):
         # Connections
         ##################################################
         self.connect((self.analog_const_source_x_0, 0), (self.blocks_float_to_complex_0, 1))
-        self.connect((self.blocks_float_to_complex_0, 0), (self.blocks_multiply_const_vxx_0, 0))
-        self.connect((self.blocks_head_0, 0), (self.soapy_hackrf_sink_0, 0))
-        self.connect((self.blocks_multiply_const_vxx_0, 0), (self.blocks_head_0, 0))
+        self.connect((self.blocks_float_to_complex_0, 0), (self.soapy_hackrf_sink_0, 0))
         self.connect((self.blocks_multiply_xx_0, 0), (self.blocks_float_to_complex_0, 0))
         self.connect((self.blocks_multiply_xx_0, 0), (self.qtgui_freq_sink_x_0, 0))
         self.connect((self.blocks_multiply_xx_0, 0), (self.qtgui_time_sink_x_0_0, 0))
@@ -292,15 +288,12 @@ class dsss_rf_tx(gr.top_block, Qt.QWidget):
 
     def set_tx_burst_samples(self, tx_burst_samples):
         self.tx_burst_samples = tx_burst_samples
-        self.blocks_head_0.set_length((int(self.tx_burst_samples)*2))
 
     def get_tx_amp(self):
         return self.tx_amp
 
     def set_tx_amp(self, tx_amp):
         self.tx_amp = tx_amp
-        self.blocks_multiply_const_vxx_0.set_k(self.tx_amp)
-        self.soapy_hackrf_sink_0.set_gain(0, 'AMP', self.tx_amp)
 
     def get_samples_per_symbol(self):
         return self.samples_per_symbol
