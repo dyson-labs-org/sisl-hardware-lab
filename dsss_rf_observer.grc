@@ -11,7 +11,7 @@ options:
     gen_linking: dynamic
     generate_options: qt_gui
     hier_block_src_path: '.:'
-    id: spreadtest
+    id: dsss_rf_observer
     max_nouts: '0'
     output_language: python
     placement: (0,0)
@@ -45,18 +45,6 @@ blocks:
     coordinate: [40, 156.0]
     rotation: 0
     state: enabled
-- name: code_len
-  id: variable
-  parameters:
-    comment: ''
-    value: '127'
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [152, 260.0]
-    rotation: 0
-    state: enabled
 - name: samp_rate
   id: variable
   parameters:
@@ -67,30 +55,6 @@ blocks:
     bus_source: false
     bus_structure: null
     coordinate: [40, 260.0]
-    rotation: 0
-    state: enabled
-- name: samples_per_symbol
-  id: variable
-  parameters:
-    comment: ''
-    value: code_len * sps_chip
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [144, 340.0]
-    rotation: 0
-    state: enabled
-- name: sps_chip
-  id: variable
-  parameters:
-    comment: ''
-    value: '2'
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [40, 340.0]
     rotation: 0
     state: enabled
 - name: blocks_complex_to_real_0
